@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Schedule Slot Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f9f9f9;
+            color: black;
+        }
+
+        h2 {
+            text-align: center;
+            color: black;
+        }
+
+        form {
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: red;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 30px;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+            padding: 15px;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .slot-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            padding: 15px;
+        }
+
+        .slot-box {
+            background: #ecf0f1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 5px;
+            font-size: 14px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
+
+        .slot-box:hover {
+            transform: scale(1.05);
+            background: #dfe6e9;
+        }
+
+        .action-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-icons span {
+            cursor: pointer;
+        }
+
+        .action-icons form button {
+            font-size: 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #e74c3c;
+            transition: transform 0.2s;
+        }
+
+        .action-icons form button:hover {
+            transform: scale(1.2);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Schedule Slot Generator</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group"><label>Staff:</label><input type="text" name="staff" required /></div>
+        <div class="form-group"><label>Date:</label><input type="date" name="date" required /></div>
+        <div class="form-group"><label>Start Time:</label><input type="time" name="start_time" required /></div>
+        <div class="form-group"><label>End Time:</label><input type="time" name="end_time" required /></div>
+        <div class="form-group"><label>Minutes per Slot:</label><input type="number" name="slot_minutes" required />
+        </div>
+        <div class="button-container">
+            <button type="submit">Generate Slots</button>
+        </div>
+    </form>
+
+    {% if schedules %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Staff</th>
+                <th>Schedule Start</th>
+                <th>Schedule End</th>
+                <th>Slot Minutes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in schedules %}
+            <tr>
+                <td>{{ s.date }}</td>
+                <td>{{ s.staff }}</td>
+                <td>{{ s.start_time }}</td>
+                <td>{{ s.end_time }}</td>
+                <td>{{ s.slot_minutes }}</td>
+                <td class="action-icons">
+                    <span title="Edit">✏️</span>
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="delete_index" value="{{ forloop.counter0 }}" />
+                        <button type="submit" title="Delete">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <div class="slot-container">
+                        {% for slot in s.slots %}
+                        <div class="slot-box">{{ slot }}</div>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</body>
+
+</html>
