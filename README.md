@@ -12,6 +12,11 @@ Display each slot in a styled container.
 Option to delete existing schedules.
 Clean, responsive, and user-friendly interface.
 
+How to Run
+Start the Django development server (e.g., python manage.py runserver).
+Open your browser and go to:
+http://localhost:8000/schedule_view
+You can now use the form to create and manage schedule slots.
 
 ![Image](https://github.com/user-attachments/assets/59ba9834-96ee-41bc-8dcb-d0a1daf494c4)
 
